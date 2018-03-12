@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.StatisticalDao">
+
+    <!--出租房间数-->
+ <select id="statisticalStayregister" resultType="int">
+      SELECT COUNT(1) FROM `stayregister`
+ </select>
+    <!--住宿人数-->
+    <select id="statisticalPassenger" resultType="int">
+      SELECT COUNT(1) FROM `passenger`
+    </select>
+    <!--消费金额总计-->
+    <select id="statisticalConsumptionMoney" resultType="java.lang.Float">
+      SELECT SUM(`consumptionMoney`) FROM `consumptiondetails`
+    </select>
+    <!--结账金额总计-->
+    <select id="statisticalSumConst" resultType="java.lang.Float">
+      SELECT SUM(`sumConst`) FROM `stayregister`
+    </select>
+
+</mapper>

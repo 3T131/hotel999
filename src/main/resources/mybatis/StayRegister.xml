@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.StayRegisterDao">
+
+<!--删除StayRegisterDetails表有stayRegisterID的列-->
+    <delete id="deleteStayRegisterDetailsByStayRegisterID">
+        DELETE FROM stayregisterdetails WHERE stayRegisterID=#{stayRegisterID}
+    </delete>
+
+    <!--删除多行-->
+    <delete id="deleteStayRegister">
+        delete from stayregister WHERE stayregisterId IN
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    
+    
+    <!--新增旅客与登记关系-->
+    <insert id="insertStayRegisterDetails">
+        INSERT INTO `stayregisterdetails`(`stayregisterdetailsId`,`stayRegisterID`,`passengerID`)
+        VALUES(DEFAULT,#{stayRegisterID},#{passengerID})
+    </insert>
+
+    <!--新增-->
+    <insert id="insertStayRegisters">
+        INSERT  INTO `stayregister`(`stayregisterId`,`predetermineID`,`rentOutTypeID`
+          ,`roomID`,`payWayID`,`billUnitID`,`passengerTypeID`,`receiveTargetID`
+          ,`isBillID`,`registerTime`,`stayNumber`,`sumConst`
+          ,`ChangingRoomNumber`,`changRoomMoney`,`remarks`,`payTime`
+          ,`changRoomTime`,`remind`,`LvKeLeiXingId`,`dpId`)
+        VALUES (DEFAULT,#{predetermineID},#{rentOutTypeID},#{roomID},#{payWayID},#{billUnitID}
+                ,#{passengerTypeID},#{receiveTargetID},#{isBillID}
+                ,now(),#{stayNumber},#{sumConst},#{changingRoomNumber},#{changRoomMoney},#{remarks}
+                ,#{payTime},#{changRoomTime},0,#{LvKeLeiXingId},#{dpId})
+    </insert>
+
+<!--分页条件查询列表-->
+    <select id="listByPager" resultMap="StayRegisterMap">
+      SELECT stayregister.*,Predetermine.*,ReceiveTarget.*,room.*,depoit.*
+            ,rentOutType.attributeDetailsName rentOutType
+            ,payWay.attributeDetailsName payWay
+            ,billunit.attributeDetailsName billunit
+            ,passengerType.attributeDetailsName passengerType
+            ,isBillON.attributeDetailsName isBill
+               ,passenger.*
+      FROM stayregister
+          <include refid="JOIN"/>
+          <include refid="wherePager"/>
+     order by stayregister.remind desc,stayregister.registerTime desc
+        limit #{qis},#{pageSize}
+    </select>
+<!--查询总行数-->
+    <select id="totalRow" resultType="int">
+        SELECT count(1)  FROM stayregister
+        <include refid="JOIN"/>
+        <include refid="wherePager"/>
+    </select>
+<!--按条件查询-->
+    <select id="listByParam" resultMap="StayRegisterMap">
+         SELECT stayregister.*,Predetermine.*,ReceiveTarget.*,room.*,depoit.*
+            ,rentOutType.attributeDetailsName rentOutType
+            ,payWay.attributeDetailsName payWay
+            ,billunit.attributeDetailsName billunit
+            ,passengerType.attributeDetailsName passengerType
+            ,isBillON.attributeDetailsName isBill
+               ,passenger.*,consumptiondetails.*
+      FROM stayregister
+        <include refid="JOIN"/>
+        LEFT JOIN consumptiondetails ON consumptiondetails.stayRegisterID=stayregister.stayregisterId
+        <where>
+            <if test="stayRegisterId!=null">
+                and stayregister.stayRegisterId=#{stayRegisterId}
+            </if>
+        </where>
+    </select>
+<!--按Id动态修改-->
+    <update id="updateByParam" >
+        UPDATE stayregister
+        <include refid="updateSet"/>
+        where stayregisterId=#{stayRegisterId}
+    </update>
+
+<!--连接的表-->
+    <sql id="JOIN">
+        LEFT JOIN  Predetermine ON stayregister.Predetermineid=Predetermine.Predetermineid
+        INNER JOIN  ReceiveTarget ON stayregister.receiveTargetID=ReceiveTarget.ReceiveTargetid
+        INNER JOIN  room ON stayregister.roomId=room.roomid
+        INNER JOIN  depoit ON stayregister.dpId=depoit.depoitId
+        INNER JOIN  attributedetails rentOutType ON stayregister.rentOutTypeID=rentOutType.AttributeDetailsid
+        LEFT JOIN  attributedetails payWay ON stayregister.payWayId=payWay.AttributeDetailsid
+        INNER JOIN  attributedetails billunit ON stayregister.billunitid=billunit.AttributeDetailsid
+        INNER JOIN  attributedetails passengerType ON stayregister.passengerTypeId=passengerType.AttributeDetailsid
+        INNER JOIN  attributedetails isBillON ON stayregister.isBillID=isBillON.AttributeDetailsid
+        LEFT JOIN StayRegisterDetails ON StayRegisterDetails.stayRegisterID=stayregister.stayRegisterID
+        LEFT JOIN passenger ON StayRegisterDetails.passengerID=passenger.pId
+
+    </sql>
+<!--分页加的条件-->
+    <sql id="wherePager">
+        <where>
+            <if test="params.LvKeLeiXingId!=null ">
+                and stayregister.LvKeLeiXingId=#{params.LvKeLeiXingId}
+            </if>
+            <if test="params.roomNumber!=null and params.roomNumber!='' ">
+                and room.roomNumber LIKE concat('%',#{params.roomNumber},'%')
+            </if>
+            <if test="params.isBillID!=null ">
+                and stayregister.isBillID=#{params.isBillID}
+            </if>
+            <if test="params.dateMin!=null ">
+                and stayregister.payTime <![CDATA[>=]]> #{params.dateMin}
+            </if>
+            <if test="params.dateMax!=null ">
+                and stayregister.payTime <![CDATA[<=]]> #{params.dateMax}
+            </if>
+            <if test="params.passengerName!=null and params.passengerName!=''">
+                and passenger.name LIKE  CONCAT('%',#{params.passengerName},'%')
+            </if>
+        </where>
+    </sql>
+<!--映射结果集-->
+   <resultMap id="StayRegisterMap" autoMapping="true" type="StayRegister">
+       <id property="stayRegisterId" column="stayRegisterId"/>
+       <result property="rentOutType" column="rentOutType"/>
+       <result property="payWay" column="payWay"/>
+       <result property="billUnit" column="billUnit"/>
+       <result property="passengerType" column="passengerType"/>
+       <result property="isBill" column="isBill"/>
+       <association property="predetermine" autoMapping="true" javaType="Predetermine">
+           <id property="predetermineId" column="predetermineId"/>
+       </association>
+       <association property="room" autoMapping="true" javaType="Room">
+           <id property="roomId" column="roomId"/>
+       </association>
+       <association property="receiveTarget" autoMapping="true" javaType="ReceiveTarget">
+           <id property="receiveTargetId" column="receiveTargetId"/>
+       </association>
+       <association property="depoit" autoMapping="true" javaType="Depoit">
+           <id property="depoitId" column="depoitId"/>
+       </association>
+       <collection property="passengerList" autoMapping="true"  javaType="com.accp.entity.Passenger">
+           <id property="pId" column="pId"/>
+           <result property="papersID" column="papersID"/>
+           <result property="genderID" column="genderID"/>
+           <result property="passengerLevelID" column="passengerLevelID"/>
+           <result property="nationID" column="nationID"/>
+           <result property="name" column="name"/>
+           <result property="papersNumber" column="papersNumber"/>
+           <result property="birthDate" column="birthDate"/>
+           <result property="papersValidity" column="papersValidity"/>
+           <result property="phoneNumber" column="phoneNumber"/>
+           <result property="remarks" column="remarks"/>
+       </collection>
+       <collection property="consumptionDetailsList" autoMapping="true"  javaType="com.accp.entity.ConsumptionDetails">
+       </collection>
+   </resultMap>
+<!--修改的动态set-->
+    <sql id="updateSet">
+        <set>
+            <if test="predetermineID!=null">
+                predetermineID=#{predetermineID},
+            </if>
+            <if test="rentOutTypeID!=null">
+                rentOutTypeID=#{rentOutTypeID},
+            </if>
+            <if test="roomID!=null">
+                roomID=#{roomID},
+            </if>
+            <if test="payWayID!=null">
+                payWayID=#{payWayID},
+            </if>
+            <if test="billUnitID!=null">
+                billUnitID=#{billUnitID},
+            </if>
+            <if test="passengerTypeID!=null">
+                passengerTypeID=#{passengerTypeID},
+            </if>
+            <if test="receiveTargetID!=null">
+                receiveTargetID=#{receiveTargetID},
+            </if>
+            <if test="isBillID!=null">
+                isBillID=#{isBillID},
+            </if>
+            <if test="registerTime!=null">
+                registerTime=#{registerTime},
+            </if>
+            <if test="stayNumber!=null">
+                stayNumber=#{stayNumber},
+            </if>
+            <if test="changingRoomNumber!=null">
+                ChangingRoomNumber=#{changingRoomNumber},
+            </if>
+            <if test="changRoomMoney!=null">
+                changRoomMoney=#{changRoomMoney},
+            </if>
+            <if test="remarks!=null">
+                remarks=#{remarks},
+            </if>
+            <if test="payTime!=null">
+                payTime=#{payTime},
+            </if>
+            <if test="predetermineID!=null">
+                changRoomTime=#{changRoomTime},
+            </if>
+            <if test="remind!=null">
+                remind=#{remind},
+            </if>
+            <if test="LvKeLeiXingId!=null">
+                LvKeLeiXingId=#{LvKeLeiXingId},
+            </if>
+            <if test="dpId!=null">
+                dpId=#{dpId},
+            </if>
+            <if test="sumConst!=null">
+                sumConst=#{sumConst},
+            </if>
+            <if test="changRoomTime!=null">
+                changRoomTime=#{changRoomTime},
+            </if>
+        </set>
+    </sql>
+
+</mapper>

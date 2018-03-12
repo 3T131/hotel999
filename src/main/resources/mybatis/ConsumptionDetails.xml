@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.ConsumptionDetailsDao">
+
+    <!--新增消费-->
+    <insert id="insertConsumptionDetails">
+        INSERT INTO `consumptiondetails`(`consumptiondetailsId`,`stayRegisterID`,`cID`,`consumptionNumber`,`consumptionMoney`,`consumptionTime`)
+      VALUES(DEFAULT,#{stayRegisterID},#{cID},#{consumptionNumber},#{consumptionMoney},now())
+    </insert>
+
+    <!--zeliang查询-->
+    <select id="listByParam" resultMap="ConsumptionDetailsMap">
+        SELECT commodity.*,consumptiondetails.*,
+          uOM.attributeDetailsName uOM,
+          commodityType.attributeDetailsName commodityType
+        FROM commodity
+        LEFT JOIN attributedetails uOM ON commodity.uOMID=uOM.attributeDetailsId
+        LEFT JOIN attributedetails commodityType ON commodity.commodityTypeId=commodityType.attributedetailsId
+        INNER JOIN consumptiondetails ON consumptiondetails.cID=commodity.`commodityId`
+        <where>
+            <if test="stayRegisterID!=null">
+                consumptiondetails.stayRegisterID=#{stayRegisterID}
+            </if>
+        </where>
+    </select>
+
+    <!--zeliang删除-->
+    <delete id="deleteByIds">
+        DELETE FROM consumptiondetails WHERE consumptiondetailsId IN
+        <foreach collection="array" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+<!--映射结果-->
+    <resultMap id="ConsumptionDetailsMap" autoMapping="true" type="ConsumptionDetails">
+        <association property="commodity" javaType="Commodity" autoMapping="true">
+            <result column="commodityId" property="commodityId"/>
+            <result column="commodityTypeID" property="commodityTypeID"/>
+            <result column="uOMID" property="uOMID"/>
+            <result column="commodityName" property="commodityName"/>
+            <result column="salePrice" property="salePrice"/>
+            <result column="commodityType" property="commodityType"/>
+            <result column="uOM" property="uOM"/>
+        </association>
+    </resultMap>
+
+</mapper>

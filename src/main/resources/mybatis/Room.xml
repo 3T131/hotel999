@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.RoomDao">
+    <!--别名的配置-->
+<resultMap id="roomList" type="Room">
+    <result property="roomName" column="roomName"></result>
+    <result property="guestRoomLevelName" column="guestRoomLevelName"/>
+</resultMap>
+    <!--按id数组查询集合-->
+    <select id="listByIds" resultMap="roomList">
+         SELECT room.*,roomName.attributeDetailsName roomName,
+        guestRoomLevelName.attributeDetailsName guestRoomLevelName
+        FROM room
+        INNER JOIN attributedetails roomName ON room.`roomStateID`=roomName.attributedetailsId
+        INNER JOIN attributedetails guestRoomLevelName ON room.guestRoomLevelID =guestRoomLevelName.attributedetailsId
+        where roomId IN
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--修改房屋状态-->
+    <update id="updateState">
+        UPDATE room set roomStateID=#{state} WHERE roomId=#{roomId}
+    </update>
+
+    <select id="listByParam" resultMap="roomList">
+         SELECT room.*,roomName.attributeDetailsName roomName,
+        guestRoomLevelName.attributeDetailsName guestRoomLevelName
+        FROM room
+        INNER JOIN attributedetails roomName ON room.`roomStateID`=roomName.attributedetailsId
+        INNER JOIN attributedetails guestRoomLevelName ON room.guestRoomLevelID =guestRoomLevelName.attributedetailsId
+        <where>
+            <if test="guestRoomLevelID!=null and guestRoomLevelID>0">
+                AND guestRoomLevelID = #{guestRoomLevelID}
+            </if>
+            <if test="roomStateID!=null and roomStateID>0">
+                AND roomStateID = #{roomStateID}
+            </if>
+            <if test="roomNumber!=null and roomNumber!=''">
+                AND roomNumber = LIKE CONCAT('%',#{roomNumber},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--模糊查询&&分页查询-->
+    <select id="listPage" resultMap="roomList">
+        SELECT room.*,roomName.attributeDetailsName roomName,
+        guestRoomLevelName.attributeDetailsName guestRoomLevelName
+        FROM room
+        INNER JOIN attributedetails roomName ON room.`roomStateID`=roomName.attributedetailsId
+        INNER JOIN attributedetails guestRoomLevelName ON room.guestRoomLevelID =guestRoomLevelName.attributedetailsId
+        <where>
+            <if test="params.roomNumber!=null and params.roomNumber!=''">
+                AND roomNumber  LIKE CONCAT('%',#{params.roomNumber},'%')
+            </if>
+        </where>
+        ORDER  BY  room.roomid DESC
+        limit #{qis},#{pageSize}
+    </select>
+    <!--查询总行数-->
+    <select id="totalRow" resultType="int">
+        SELECT count(1) FROM room
+        INNER JOIN attributedetails roomName ON room.`roomStateID`=roomName.attributedetailsId
+        INNER JOIN attributedetails guestRoomLevelName ON room.guestRoomLevelID =guestRoomLevelName.attributedetailsId
+        <where>
+            <if test="params.roomNumber!=null and params.roomNumber!=''">
+                AND roomNumber  LIKE CONCAT('%',#{params.roomNumber},'%')
+            </if>
+        </where>
+    </select>
+    <!--新增客房-->
+    <insert id="insertRoom">
+        insert  into `room`(`roomId`,`guestRoomLevelID`,`roomStateID`,`roomNumber`,
+        `roomAmount`,`standardPriceDay`,`standardPrice`,`maxDuration`,`firstDuration`,`firstPrice`)
+        values (DEFAULT,#{guestRoomLevelID},#{roomStateID},#{roomNumber},#{roomAmount},
+        #{standardPriceDay},#{standardPrice},#{maxDuration},#{firstDuration},#{firstPrice})
+    </insert>
+    <!--删除客房-->
+    <delete id="deleteRoom">
+        DELETE FROM room WHERE roomId IN
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <select id="selectRoom" resultMap="roomList">
+        SELECT room.*,roomName.attributeDetailsName roomName,
+        guestRoomLevelName.attributeDetailsName guestRoomLevelName
+        FROM room
+        INNER JOIN attributedetails roomName ON room.`roomStateID`=roomName.attributedetailsId
+        INNER JOIN attributedetails guestRoomLevelName ON room.guestRoomLevelID =guestRoomLevelName.attributedetailsId
+    </select>
+    <!--根据id查询客房-->
+    <select id="roomById" resultMap="roomList">
+        SELECT * FROM room
+        INNER JOIN attributedetails roomName ON room.`roomStateID`=roomName.attributedetailsId
+        INNER JOIN attributedetails guestRoomLevelName ON room.guestRoomLevelID =guestRoomLevelName.attributedetailsId
+        where roomId=#{roomId}
+    </select>
+    <!--修改客房信息-->
+    <update id="updateRoom" >
+        update room
+        <set>
+            <if test="guestRoomLevelID>0">
+                room.guestRoomLevelID=#{guestRoomLevelID},
+            </if>
+            <if test="roomStateID>0">
+                room.roomStateID=#{roomStateID},
+            </if>
+            <if test="roomNumber!=null and roomNumber!=''">
+                room.roomNumber=#{roomNumber},
+            </if>
+            <if test="roomAmount!=null and roomAmount!=''">
+                room.roomAmount=#{roomAmount},
+            </if>
+            <if test="standardPriceDay>0">
+                room.standardPriceDay=#{standardPriceDay},
+            </if>
+            <if test="standardPrice>0">
+                room.standardPrice=#{standardPrice},
+            </if>
+            <if test="maxDuration!=null and maxDuration!=''">
+                room.maxDuration=#{maxDuration},
+            </if>
+            <if test="firstDuration!=null and firstDuration!=''">
+                room.firstDuration=#{firstDuration},
+            </if>
+            <if test="firstPrice>0">
+                room.firstPrice=#{firstPrice}
+            </if>
+        </set>
+        where room.roomid=#{roomId}
+    </update>
+</mapper>

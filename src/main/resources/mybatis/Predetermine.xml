@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.PredetermineDao">
+
+    <insert id="insertPredetermine">
+        INSERT INTO `predetermine`
+        (`predetermineId`,`roomID`,`predetermineTargetID`,`passengerID`,`payWayID`,
+        `predetermineStateID`,`arriveTime`,`deposit`,`predetermineDay`,`remind`)
+        VALUE(DEFAULT,#{roomID},#{predetermineTargetID},#{passengerID},#{payWayID}
+        ,66,#{arriveTime},#{deposit},#{predetermineDay},1);
+    </insert>
+
+    <!--修改预定状态-->
+    <update id="updateState">
+        update predetermine set predetermineStateID=#{state},remind=0 where predetermineId=#{id}
+    </update>
+
+    <resultMap id="listMap" type="Predetermine">
+        <result property="roomNumber" column="roomNumber"/>
+        <result property="passengerName" column="passengerName"/>
+        <result property="roomGuestRoomLevelName" column="roomGuestRoomLevelName"/>
+        <result property="payWayName" column="payWayName"/>
+        <result property="predetermineStateName" column="predetermineStateName"/>
+        <result property="receiveContactPhoneNUmber" column="receiveContactPhoneNUmber"/>
+        <result property="passengerContactPhoneNumber" column="passengerContactPhoneNumber"/>
+        <result property="receivePrincipal" column="receivePrincipal"/>
+        <result property="genderName" column="genderName"/>
+        <result property="papersName" column="papersName"/>
+    </resultMap>
+    <!--SQL公用脚本-->
+    <sql id="selectList">
+
+        LEFT JOIN `room` roomNumber ##客房号
+        ON predetermine.`roomID`=roomNumber.roomid
+        LEFT JOIN `receivetarget` receiveTeamName##接待对象
+        ON predetermine.`predetermineTargetID`=receiveTeamName.`receivetargetId`
+        LEFT JOIN  `passenger` passengerName ##旅客
+        ON predetermine.`passengerID`=passengerName.`pId`
+        INNER JOIN attributedetails payWayName ##支付方式
+        ON predetermine.`payWayID`=payWayName.attributedetailsId
+        LEFT JOIN attributedetails roomState  ##客房等级
+        ON roomNumber.`guestRoomLevelID`=roomState.`attributedetailsId`
+        INNER JOIN attributedetails predetermineState ##预定状态
+        ON predetermine.predetermineStateid=predetermineState.attributedetailsId
+        <where>
+            <if test="params.roomNumber!=null and params.roomNumber!=''">
+                and roomNumber.`roomNumber` LIKE CONCAT('%',#{params.roomNumber},'%')
+            </if>
+            <if test="params.receivePrincipal!=null and params.receivePrincipal!=''">
+                and `principal` LIKE CONCAT('%',#{params.receivePrincipal},'%')
+            </if>
+            <if test="params.receivePrincipal!=null and params.receivePrincipal!=''">
+                and `principal` LIKE CONCAT('%',#{params.receivePrincipal},'%')
+            </if>
+            <if test="params.passengerName!=null and params.passengerName!=''">
+                and     `NAME` LIKE CONCAT('%',#{params.passengerName},'%')
+            </if>
+            <if test="params.predetermineStateID!=null and params.predetermineStateID!=''">
+                and     `predetermineStateID` =#{params.predetermineStateID}
+            </if>
+        </where>
+
+    </sql>
+    <!--分页查询&&模糊查询-->
+    <select id="list" resultMap="listMap">
+        SELECT predetermine.*,
+        roomNumber.`roomNumber` roomNumber,
+        passengerName.`name` passengerName,
+        roomState.`attributeDetailsName` roomGuestRoomLevelName, ##客房等级
+        payWayName.`attributeDetailsName` payWayName,
+        predetermineState.attributeDetailsName predetermineStateName,
+        receiveTeamName.`contactPhoneNUmber`  receiveContactPhoneNUmber,
+        passengerName.`PhoneNumber`  passengerContactPhoneNumber,
+        receiveTeamName.`principal` receivePrincipal ##负责人
+        FROM predetermine
+      <include refid="selectList"/>
+        ORDER  BY  predetermine.predetermineId DESC
+        limit #{qis},#{pageSize}
+    </select>
+    <!--查询总记录行数-->
+    <select id="totalRow" resultType="int">
+      SELECT COUNT(1)
+         FROM predetermine
+       <include refid="selectList"/>
+
+    </select>
+    <!--查询旅客-->
+    <select id="listByPassenger" resultType="Passenger">
+        SELECT  passenger.`name`,passenger.`pId`,passenger.phoneNumber,
+            passenger.`papersNumber` ,genderName.`attributeDetailsName` genderName,
+            papersName.`attributeDetailsName` papersName
+              FROM passenger
+            INNER JOIN `attributedetails` genderName ON genderName.`attributedetailsId`=passenger.`genderID`
+            INNER JOIN attributedetails papersName ON papersName.`attributedetailsId`=passenger.`papersID`
+            <where>
+                <if test="name!=null and name!=''">
+                    and NAME LIKE CONCAT('%',#{name},'%')
+                </if>
+            </where>
+    </select>
+    <!--删除-->
+    <delete id="delete">
+        DELETE FROM predetermine WHERE predetermineId IN
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <!--查询单条信息，修改用-->
+    <select id="selectById" resultMap="listMap">
+         SELECT predetermine.*,
+        roomNumber.`roomNumber` roomNumber,
+        passengerName.`name` passengerName,
+        roomState.`attributeDetailsName` roomGuestRoomLevelName, ##客房等级
+        payWayName.`attributeDetailsName` payWayName,
+        predetermineState.attributeDetailsName predetermineStateName,
+        receiveTeamName.`contactPhoneNUmber`  receiveContactPhoneNUmber,
+        passengerName.`PhoneNumber`  passengerContactPhoneNumber,
+        receiveTeamName.`principal` receivePrincipal ##负责人
+        FROM predetermine
+         LEFT JOIN `room` roomNumber ##客房号
+        ON predetermine.`roomID`=roomNumber.roomid
+        LEFT JOIN `receivetarget` receiveTeamName##接待对象
+        ON predetermine.`predetermineTargetID`=receiveTeamName.`receivetargetId`
+        LEFT JOIN  `passenger` passengerName ##旅客
+        ON predetermine.`passengerID`=passengerName.`pId`
+        INNER JOIN attributedetails payWayName ##支付方式
+        ON predetermine.`payWayID`=payWayName.attributedetailsId
+        LEFT JOIN attributedetails roomState  ##客房等级
+        ON roomNumber.`guestRoomLevelID`=roomState.`attributedetailsId`
+        INNER JOIN attributedetails predetermineState ##预定状态
+        ON predetermine.predetermineStateid=predetermineState.attributedetailsId
+        where predetermine.predetermineId=#{predetermineId}
+    </select>
+    <update id="update" >
+        update predetermine
+        <set>
+        <if test="targetTypeID>0">
+        </if>
+        </set>
+    </update>
+</mapper>

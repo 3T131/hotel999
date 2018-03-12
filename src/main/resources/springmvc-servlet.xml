@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+    http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.2.xsd"
+       default-autowire="byName">
+
+
+    <mvc:resources mapping="/static/**" location="/WEB-INF/static/" />
+
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--配置自定义转换器ConversionServiceFactoryBean-->
+    <bean name="conversionService"  class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <!--定义那些自定义转换器-->
+        <property name="converters">
+            <!--set类型的集合-->
+            <set>
+                <bean class="com.accp.converter.DateConverter" >
+                    <property name="format" value="yyyy-MM-dd"/>
+                </bean>
+            </set>
+        </property>
+    </bean>
+
+    <mvc:annotation-driven conversion-service="conversionService">
+        <!--设置spring消息转换器-->
+        <mvc:message-converters>
+            <!--设置spring消息转换器的字符格式，解决springmvc返回的json中文问题  -->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <constructor-arg value="utf-8"/>
+            </bean>
+            <!--配置对对象的json解析器-->
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!--<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">-->
+        <!--<property name="exceptionMappings">-->
+            <!--<props>-->
+                <!--<prop key="java.lang.RuntimeException">page_500</prop>-->
+            <!--</props>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--文件上传 attributeId="multipartResolver" -->
+    <bean  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="500000"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+    <!--扫包-->
+    <context:component-scan base-package="com.accp.controller,com.accp.biz" />
+
+    <!--拦截器-->
+    <!--<mvc:interceptors>-->
+        <!--<mvc:interceptor>-->
+            <!--<mvc:mapping path="/user/**"/>-->
+            <!--<mvc:mapping path="/bill/sys/**"/>-->
+            <!--<mvc:mapping path="/provider/sys/**"/>-->
+            <!--<bean class="com.accp.interceptor.SysInterceptor"/>-->
+        <!--</mvc:interceptor>-->
+        <!--<mvc:interceptor>-->
+            <!--<mvc:mapping path="/logins/**"/>-->
+            <!--<mvc:mapping path="/user/**"/>-->
+            <!--<mvc:mapping path="/provider/**"/>-->
+            <!--<mvc:mapping path="/bill/**"/>-->
+            <!--<bean class="com.accp.interceptor.AdminInterceptor"/>-->
+        <!--</mvc:interceptor>-->
+    <!--</mvc:interceptors>-->
+
+    <!-- 配置多视图解析器 -->
+    <!--<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">-->
+    <!--&lt;!&ndash;指定多解析器&ndash;&gt;-->
+    <!--<property name="defaultViews">-->
+    <!--<list>-->
+    <!--&lt;!&ndash;配置json解析器&ndash;&gt;-->
+    <!--<bean class="com.alibaba.fastjson.support.spring.FastJsonJsonView">-->
+    <!--<property name="charset" value="utf-8"/>-->
+    <!--</bean>-->
+    <!--</list>-->
+    <!--</property>-->
+    <!--&lt;!&ndash;指定 jsp解析器 &ndash;&gt;-->
+    <!--<property name="viewResolvers">-->
+    <!--<list>-->
+    <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+    <!--<property name="prefix" value="/WEB-INF/res/" />-->
+    <!--<property name="suffix" value=".jsp" />-->
+    <!--</bean>-->
+    <!--</list>-->
+    <!--</property>-->
+    <!--</bean>-->
+
+
+</beans>

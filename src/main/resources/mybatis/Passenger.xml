@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.PassengerDao">
+<!--别名-->
+    <resultMap id="listMap" type="Passenger">
+        <id property="pId" column="pId"/>
+        <result property="genderName" column="genderName"/>
+        <result property="nationName" column="nationName"/>
+        <result property="passengerLevelName" column="passengerLevelName"/>
+        <result property="papersName" column="papersName"/>
+    </resultMap>
+     <!--公用的sql-->
+    <sql id="queryPassenger">
+         SELECT passenger.*,
+            gender.attributeDetailsName genderName,
+            nation.attributeDetailsName nationName,
+           passengerLevel.attributeDetailsName passengerLevelName,
+           papers.attributeDetailsName papersName
+
+           FROM passenger
+            INNER JOIN attributedetails gender ON passenger.genderid=gender.attributedetailsId
+            INNER JOIN attributedetails nation ON passenger.nationid=nation.attributedetailsId
+            INNER JOIN attributedetails passengerLevel ON passenger.passengerlevelid=passengerLevel.attributedetailsId
+            INNER JOIN attributedetails papers ON passenger.papersid=papers.attributedetailsId
+       </sql>
+
+    <select id="listByIds" resultMap="listMap" parameterType="java.lang.String">
+        <include refid="queryPassenger"></include>
+        WHERE pId in
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--得到最新insert的一行数据的自动增长-->
+    <select id="last_insert_id" resultType="int">
+        select last_insert_id();
+    </select>
+
+<!--添加旅客-->
+    <insert id="add">
+        INSERT  INTO `passenger`(`pId`,`papersID`,`genderID`,
+        `passengerLevelID`,`nationID`,`name`,`papersNumber`,
+        `birthDate`,`createDate`,`PhoneNumber`,`remarks`)
+        VALUES (DEFAULT,#{papersID},#{genderID},#{passengerLevelID},#{nationID},
+        #{name},#{papersNumber},#{birthDate},now(),#{phoneNumber},#{remarks})
+    </insert>
+    <!--删除-->
+    <delete id="delete" parameterType="java.lang.String">
+        DELETE FROM passenger WHERE pId IN
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <!--查询要修改的旅客-->
+    <select id="queryPassengerId" resultMap="listMap">
+        <include refid="queryPassenger"></include>
+        WHERE pId=#{pId}
+    </select>
+    <!--修改的旅客-->
+    <update id="update">
+        UPDATE passenger
+        <set>
+            <if test="name!=null and name!=''">
+                passenger.name=#{name},
+            </if>
+            <if test="nationID>0">
+                passenger.`nationID`=#{nationID},
+            </if>
+            <if test="genderID>0">
+                passenger.`genderID`=#{genderID},
+            </if>
+            <if test="birthDate!=null and birthDate!=''">
+                passenger.`birthDate`=#{birthDate},
+            </if>
+            <if test="papersID>0">
+                passenger.`papersID`=#{papersID},
+            </if>
+            <if test="passengerLevelID>0">
+                passenger.`passengerLevelID`=#{passengerLevelID},
+            </if>
+            <if test="papersNumber!=null and papersNumber!=''">
+                passenger.`papersNumber`=#{papersNumber},
+            </if>
+            <if test="remarks!=null and remarks!=''">
+                passenger.`remarks`=#{remarks},
+            </if>
+            <if test="phoneNumber!=null and phoneNumber!=''">
+                passenger.`PhoneNumber`=#{phoneNumber}
+            </if>
+        </set>
+        WHERE passenger.`pId`=#{pId}
+
+    </update>
+    <!--分页查询&&模糊查询-->
+    <select id="listPage" resultMap="listMap">
+        <include refid="queryPassenger"/>
+        <where>
+            <if test="params.name!=null and params.name!=''">
+                and name like concat('%',#{params.name},'%')
+            </if>
+        </where>
+        ORDER  BY  passenger.pid DESC
+        limit #{qis},#{pageSize}
+    </select>
+    <!--总页数-->
+    <select id="totalRow" resultType="int">
+        select count(1) from passenger
+          INNER JOIN attributedetails gender ON passenger.genderid=gender.attributedetailsId
+            INNER JOIN attributedetails nation ON passenger.nationid=nation.attributedetailsId
+            INNER JOIN attributedetails passengerLevel ON passenger.passengerlevelid=passengerLevel.attributedetailsId
+            INNER JOIN attributedetails papers ON passenger.papersid=papers.attributedetailsId
+        <where>
+            <if test="params.name!=null and params.name!=''">
+                and name like concat('%',#{params.name},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

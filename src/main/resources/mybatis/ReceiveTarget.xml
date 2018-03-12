@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.ReceiveTargetDao">
+
+    <!--登录-->
+    <select id="selectLogin" resultMap="listMap">
+         SELECT receivetarget.*,targetTypeName.`attributeDetailsName` targetTypeName FROM receivetarget
+        INNER JOIN `attributedetails` targetTypeName ON receivetarget.targettypeid=targetTypeName.`attributedetailsId`
+        where contactPhoneNUmber=#{contactPhoneNUmber}
+        and teamCode=#{teamCode}
+    </select>
+
+    <!--别名-->
+    <resultMap id="listMap" type="ReceiveTarget">
+        <result property="targetTypeName" column="targetTypeName"/>
+    </resultMap>
+
+    <!--动态查询所有-->
+    <select id="listByParam" resultMap="listMap">
+         SELECT receivetarget.*,targetTypeName.`attributeDetailsName` targetTypeName FROM receivetarget
+        INNER JOIN `attributedetails` targetTypeName ON receivetarget.targettypeid=targetTypeName.`attributedetailsId`
+
+    </select>
+    <!--分页查询&&模糊查询-->
+<select id="list" resultMap="listMap">
+    SELECT receivetarget.*,targetTypeName.`attributeDetailsName` targetTypeName FROM receivetarget
+        INNER JOIN `attributedetails` targetTypeName ON receivetarget.targettypeid=targetTypeName.`attributedetailsId`
+        <where >
+            <if test="params.principal!=null and params.principal!=''">
+                principal LIKE CONCAT('%',#{params.principal},'%')
+            </if>
+        </where>
+    ORDER  BY  receivetarget.receivetargetid DESC
+    limit #{qis},#{pageSize}
+</select>
+    <!--查询总页数-->
+    <select id="totalRow" resultType="int">
+        SELECT COUNT(1) FROM receivetarget
+	INNER JOIN `attributedetails` targetTypeName ON receivetarget.targettypeid=targetTypeName.`attributedetailsId`
+        <where >
+            <if test="params.principal!=null and params.principal!=''">
+                principal LIKE CONCAT('%',#{params.principal},'%')
+            </if>
+        </where>
+    </select>
+    <!--新增接待对象-->
+    <insert id="insertReceiveTarget" >
+        insert  into `receivetarget`(`receivetargetId`,`targetTypeID`,
+        `principal`,`teamCode`,`registerTime`,`contactPhoneNUmber`)
+        values (DEFAULT ,#{targetTypeID},#{principal},#{teamCode},#{registerTime},#{contactPhoneNUmber})
+    </insert>
+    <delete id="deleteReceiveTarget" >
+        DELETE FROM receivetarget WHERE receivetargetId IN
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <!--根据id查询单个对象-->
+    <select id="queryByid" resultMap="listMap">
+         SELECT receivetarget.*,targetTypeName.`attributeDetailsName` targetTypeName FROM receivetarget
+        INNER JOIN `attributedetails` targetTypeName ON receivetarget.targettypeid=targetTypeName.`attributedetailsId`
+        where receiveTargetId=#{receiveTargetId}
+    </select>
+    <!--更改接待对象的信息-->
+    <update id="updateReceiveTarget">
+        update receivetarget
+        <set>
+            <if test="targetTypeID>0">
+                targetTypeID=#{targetTypeID},
+            </if>
+            <if test="principal!=null and principal!=''">
+                principal=#{principal},
+            </if>
+            <if test="teamCode!=null and teamCode!=''">
+                teamCode=#{teamCode},
+            </if>
+            <if test="registerTime!=null">
+                registerTime=#{registerTime},
+            </if>
+            <if test="contactPhoneNUmber!=null and contactPhoneNUmber!=''">
+                contactPhoneNUmber=#{contactPhoneNUmber}
+            </if>
+        </set>
+        where receivetargetId=#{receiveTargetId}
+    </update>
+    <select id="selectReceive" resultMap="listMap">
+        SELECT receivetarget.*,targetTypeName.`attributeDetailsName` targetTypeName FROM receivetarget
+        INNER JOIN `attributedetails` targetTypeName ON receivetarget.targettypeid=targetTypeName.`attributedetailsId`
+        <where >
+            <if test="principal!=null and principal!=''">
+                and  principal LIKE CONCAT('%',#{principal},'%')
+            </if>
+        </where>
+    </select>
+    <select id="selectReceiveByid" resultMap="listMap">
+        SELECT receivetarget.*,targetTypeName.`attributeDetailsName` targetTypeName FROM receivetarget
+        INNER JOIN `attributedetails` targetTypeName ON receivetarget.targettypeid=targetTypeName.`attributedetailsId`
+        where receiveTargetId=#{receiveTargetId}
+    </select>
+
+</mapper>

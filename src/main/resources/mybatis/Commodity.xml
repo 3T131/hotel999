@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.CommodityDao">
+
+<resultMap id="CommodityMap" autoMapping="true" type="Commodity">
+    <result column="commodityId" property="commodityId"/>
+    <result column="commodityTypeID" property="commodityTypeID"/>
+    <result column="uOMID" property="uOMID"/>
+    <result column="commodityName" property="commodityName" />
+    <result column="salePrice" property="salePrice"/>
+    <result column="commodityType" property="commodityType"/>
+    <result column="uOM" property="uOM"/>
+</resultMap>
+
+    <select id="listByIds" resultMap="CommodityMap">
+        SELECT commodity.*,
+        uOM.attributeDetailsName uOM,
+        commodityType.attributeDetailsName commodityType
+        FROM commodity
+        LEFT JOIN attributedetails uOM ON commodity.uOMID=uOM.attributeDetailsId
+        LEFT JOIN attributedetails commodityType ON commodity.commodityTypeId=commodityType.attributedetailsId
+
+        where commodityId IN
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+             #{item}
+        </foreach>
+
+    </select>
+
+    <!--按条件动态查询-->
+    <select id="listByParam" resultMap="CommodityMap">
+        SELECT commodity.*,
+        uOM.attributeDetailsName uOM,
+        commodityType.attributeDetailsName commodityType
+        FROM commodity
+        LEFT JOIN attributedetails uOM ON commodity.uOMID=uOM.attributeDetailsId
+        LEFT JOIN attributedetails commodityType ON commodity.commodityTypeId=commodityType.attributedetailsId
+        <where>
+            <if test="commodityTypeID!=null and commodityTypeID>0">
+                and commodityTypeID = #{commodityTypeID}
+            </if>
+            <if test="commodityName!=null and commodityName!=''">
+                and commodityName like concat('%',#{commodityName},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--按商品名查询信息-->
+    <select id="queryByCommodityName" resultMap="CommodityMap">
+        SELECT commodity.*,
+        uOM.attributeDetailsName uOM,
+        commodityType.attributeDetailsName commodityType
+        FROM commodity
+        LEFT JOIN attributedetails uOM ON commodity.uOMID=uOM.attributeDetailsId
+        LEFT JOIN attributedetails commodityType ON commodity.commodityTypeId=commodityType.attributedetailsId
+        <where>
+            <if test="params.commodityTypeID!=null and params.commodityTypeID>0">
+                and commodityTypeID = #{params.commodityTypeID}
+            </if>
+            <if test="params.commodityName!=null and params.commodityName!=''">
+                and commodityName like concat('%',#{params.commodityName},'%')
+            </if>
+        </where>
+        limit #{qis},#{pageSize}
+    </select>
+  <!--设置总行数-->
+    <select id="totalRows" resultType="int">
+         SELECT count(1)  FROM commodity
+        LEFT JOIN attributedetails uOM ON commodity.uOMID=uOM.attributeDetailsId
+        LEFT JOIN attributedetails commodityType ON commodity.commodityTypeId=commodityType.attributedetailsId
+        <where>
+            <if test="params.commodityName!=null and params.commodityName!=''">
+                and commodityName like concat('%',#{params.commodityName},'%')
+            </if>
+            <if test="params.commodityTypeID!=null and params.commodityTypeID>0">
+                and commodityTypeID = #{params.commodityTypeID}
+            </if>
+        </where>
+    </select>
+
+    <!--新增商品名信息-->
+    <insert id="insert">
+        INSERT INTO commodity(commodityId,commodityTypeID,uOMID,commodityName,salePrice)
+        VALUES(DEFAULT,#{commodityTypeID},#{uOMID},#{commodityName},#{salePrice})
+    </insert>
+
+
+    <!--按id查询商品信息-->
+    <select id="getId" resultMap="CommodityMap">
+        SELECT commodity.*,
+        uOM.attributeDetailsName uOM,
+        commodityType.attributeDetailsName commodityType
+        FROM commodity
+        LEFT JOIN attributedetails uOM ON commodity.uOMID=uOM.attributeDetailsId
+        LEFT JOIN attributedetails commodityType ON commodity.commodityTypeId=commodityType.attributedetailsId
+        where commodityId=#{commodityId}
+    </select>
+
+    <!--修改商品信息-->
+    <update id="update">
+        UPDATE commodity
+        <set>
+            <if test="commodityTypeID!=null">commodityTypeID=#{commodityTypeID},</if>
+            <if test="uOMID!=null">uOMID=#{uOMID},</if>
+            <if test="commodityName!=null">commodityName=#{commodityName},</if>
+            <if test="salePrice!=null">salePrice=#{salePrice},</if>
+        </set>
+        where commodityId = #{commodityId}
+    </update>
+    <!--删除商品信息-->
+    <delete id="deleteByCommodityId">
+         DELETE FROM commodity WHERE commodityId IN
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

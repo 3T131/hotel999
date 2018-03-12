@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.AttributeDetailsDao">
+
+    <!--按属性名ID查询-->
+    <select id="listByAttributeName" resultType="AttributeDetails">
+        select * from AttributeDetails WHERE attributeID=#{attributeID}
+    </select>
+
+    <!--新增商品类别信息-->
+    <insert id="add">
+        INSERT INTO AttributeDetails(attributedetailsId,attributeID,attributeDetailsName)
+        VALUES(DEFAULT,3,#{attributeDetailsName})
+    </insert>
+    <!--删除商品类别信息-->
+    <update id="deleteAttributeDetails">
+        DELETE FROM AttributeDetails WHERE  attributedetailsId IN
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+</mapper>
