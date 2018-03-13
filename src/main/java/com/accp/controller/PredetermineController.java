@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/Predetermine")
@@ -73,18 +74,6 @@ public class PredetermineController {
         model.addAttribute("listOne",attributeDetailsBiz.listByAttributeName(4));
         return "predetermine/add";
     }
-
-    /**
-     * ajax查询旅客
-     *
-     * @return
-     */
-    @RequestMapping("/selectPassenger.do")
-    @ResponseBody
-    public String selectPassenger(String name) {
-        return JSON.toJSONString(predetermineBiz.listByPassenger(name));
-    }
-
     @RequestMapping("/selectTarget.do")
     @ResponseBody
     public String selectTarget(String name) {
@@ -101,20 +90,6 @@ public class PredetermineController {
     public String delete(String[] id) {
         predetermineBiz.delete(id);
         return "redirect:select.do";
-    }
-
-    /**
-     * 修改客房登记
-     * @param model
-     * @param id
-     * @return
-     */
-    @RequestMapping("/toupdate.do")
-    public String toupdate(@ModelAttribute("predetermine")Predetermine predetermine, Model model, int id){
-        model.addAttribute("listOne",attributeDetailsBiz.listByAttributeName(4));
-        model.addAttribute("predetermine",predetermineBiz.selectById(id));
-        model.addAttribute("roomSetPolist",roomBiz.selectRoom());
-        return "predetermine/update";
     }
     @RequestMapping("/select.do")
     public String select(@RequestParam(required = false) Integer leiXin,
@@ -136,5 +111,56 @@ public class PredetermineController {
         model.addAttribute("list",pager);
         model.addAttribute("leiXin",leiXin);
         return "predetermine/list";
+    }
+
+    /**
+     * 修改客房预定
+     * @return
+     */
+    @RequestMapping("update.do")
+    public String update(@ModelAttribute("predetermine")Predetermine predetermine,@ModelAttribute("roomSetPolist")Room roomSetPolist
+    ){
+        Predetermine predetermine1 = predetermineBiz.selectById(predetermine.getPredetermineId());
+        roomBiz.updateState(1,predetermine1.getRoomID());
+        predetermine.setRoomID(roomSetPolist.getRoomId());
+        predetermineBiz.update(predetermine);
+        roomBiz.updateState(4,roomSetPolist.getRoomId());
+        return "redirect:select.do";
+    }
+
+    /**
+     * ajax查询旅客
+     *
+     * @return
+     */
+    @RequestMapping("/selectPassenger.do")
+    @ResponseBody
+    public String selectPassenger(String roomNumber) {
+        return JSON.toJSONString(predetermineBiz.listByPassenger(roomNumber));
+    }
+
+    /**
+     * ajax查询旅客
+     *
+     * @return
+     */
+    @RequestMapping("/selectRoom.do")
+    @ResponseBody
+    public String selectRoom(String roomNumber) {
+        return JSON.toJSONString(roomBiz.queryRoomList(roomNumber));
+    }
+    /**
+     *去 修改客房预定
+     * @param model
+     * @param id
+     * @return
+     */
+    @RequestMapping("/toupdate.do")
+    public String toupdate(Predetermine predetermine, Model model, int id, HttpServletRequest request){
+        predetermine.setRoomNumber(request.getParameter("roomNumber"));
+        model.addAttribute("listOne",attributeDetailsBiz.listByAttributeName(4));
+        model.addAttribute("predetermine",predetermineBiz.selectById(id));//查询预订
+        model.addAttribute("roomSetPolist",roomBiz.queryRoom(predetermine.getRoomNumber()));//查询房间
+        return "predetermine/update";
     }
 }

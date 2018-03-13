@@ -56,4 +56,17 @@ public interface RoomBiz {
      * @return
      */
     List<Room> selectRoom();
+    int updateState(@Param("state")int state,@Param("roomId") int roomId);
+    /**
+     * 查询单条的房间
+     * @param roomNumber
+     * @return
+     */
+    Room queryRoom(@Param("roomNumber")String roomNumber);
+    /**
+     * ajax 查询客房
+     * @param roomNumber
+     * @return
+     */
+    List<Room> queryRoomList(@Param("roomNumber") String roomNumber);
 }

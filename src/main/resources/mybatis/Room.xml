@@ -20,7 +20,25 @@
             #{item}
         </foreach>
     </select>
-
+    <select id="queryRoom" resultMap="roomList">
+        SELECT room.*,roomName.attributeDetailsName roomName,
+        guestRoomLevelName.attributeDetailsName guestRoomLevelName
+        FROM room
+        INNER JOIN attributedetails roomName ON room.`roomStateID`=roomName.attributedetailsId
+        INNER JOIN attributedetails guestRoomLevelName ON room.guestRoomLevelID =guestRoomLevelName.attributedetailsId
+        where roomNumber=#{roomNumber}
+    </select>
+    <select id="queryRoomList" resultMap="roomList">
+        SELECT room.*,roomName.attributeDetailsName roomName,
+        guestRoomLevelName.attributeDetailsName guestRoomLevelName
+        FROM room
+        INNER JOIN attributedetails roomName ON room.`roomStateID`=roomName.attributedetailsId
+        INNER JOIN attributedetails guestRoomLevelName ON room.guestRoomLevelID =guestRoomLevelName.attributedetailsId
+        <where>
+            and   roomNumber like concat ('%',#{roomNumber},'%')
+        </where>
+        AND  room.roomStateID=1
+    </select>
     <!--修改房屋状态-->
     <update id="updateState">
         UPDATE room set roomStateID=#{state} WHERE roomId=#{roomId}

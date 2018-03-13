@@ -24,14 +24,18 @@ function addfunction(){
 
 function updatefunction(){
     var chk_value=[];
+    var roomId = null;
+
     $('input[name="id"]:checked').each(function(){
         chk_value.push($(this).val());
+        roomId = $(this).parent().next("td").html();
+
     });
     if(chk_value!=""){
         if(chk_value.toString().indexOf(",")>0){
             alert("修改只能选择一条");
         }else{
-            parent.document.getElementById("Mainid").src=getRootPath()+'/Predetermine/toupdate.do?id='+chk_value;
+            parent.document.getElementById("Mainid").src=getRootPath()+'/Predetermine/toupdate.do?id='+chk_value+'&roomNumber='+roomId;
         }
     }else{
         alert("请选择一条数据进行修改");

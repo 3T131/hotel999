@@ -39,6 +39,11 @@ public interface PredetermineBiz {
      * @return
      */
     Predetermine selectById(@Param("predetermineId") int predetermineId);
-
+    /**
+     * 修改
+     * @param predetermine
+     * @return
+     */
+    int update(Predetermine predetermine);
 
 }

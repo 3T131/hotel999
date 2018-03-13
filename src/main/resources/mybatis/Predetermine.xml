@@ -136,8 +136,31 @@
     <update id="update" >
         update predetermine
         <set>
-        <if test="targetTypeID>0">
-        </if>
+            <if test="roomID>0">
+                roomID=#{roomID},
+            </if>
+            <if test="predetermineTargetID>0">
+                predetermineTargetID=#{predetermineTargetID},
+            </if>
+            <if test="payWayID>0">
+                payWayID=#{payWayID},
+            </if>
+            <if test="predetermineStateID>0">
+                predetermineStateID=#{predetermineStateID},
+            </if>
+            <if test="arriveTime!=null">
+                arriveTime=#{arriveTime},
+            </if>
+            <if test="deposit>0">
+                deposit=#{deposit},
+            </if>
+            <if test="predetermineDay!='' and predetermineDay!=null">
+                predetermineDay=#{predetermineDay},
+            </if>
+            <if test="remind>0">
+                remind=#{remind}
+            </if>
         </set>
+        where predetermineId=#{predetermineId}
     </update>
 </mapper>
