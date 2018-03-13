@@ -88,6 +88,10 @@ public class PredetermineController {
      */
     @RequestMapping("/delete.do")
     public String delete(String[] id) {
+        for (int i = 0; i <id.length ; i++) {
+            Predetermine predetermine1 = predetermineBiz.selectById(Integer.parseInt(id[i]));
+            roomBiz.updateState(1,predetermine1.getRoomID());
+        }
         predetermineBiz.delete(id);
         return "redirect:select.do";
     }
