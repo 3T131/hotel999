@@ -41,6 +41,7 @@ public class StayRegisterController {
     @Resource
     public CommodityBiz commodityBiz;
 
+
     /**
      * 新增预定开房
      * @return

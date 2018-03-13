@@ -5,9 +5,13 @@ import com.accp.entity.StayRegister;
 import com.accp.entity.StayRegisterDetails;
 import org.apache.ibatis.annotations.Param;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface StayRegisterDao {
+
+    //数据统计
+    List<StayRegister> selectShuJuTongJi(@Param("min")Timestamp min, @Param("max")Timestamp max);
 
     /**
      * 删除StayRegisterDetails表有stayRegisterID的列

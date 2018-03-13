@@ -46,7 +46,7 @@
 		<div class="navbar">
 			<div class="navbar-inner">
 				<div class="container-fluid">
-					<a href="#" class="brand">
+					<a href="#"  class="brand">
 						<small>
 							<i class="icon-leaf"></i>
 							欢迎使用酒店管理系统
@@ -68,19 +68,19 @@
 			<div class="sidebar" id="sidebar">
 				<div class="sidebar-shortcuts" id="sidebar-shortcuts">
 					<div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
-						<button class="btn btn-small btn-success">
+						<button onclick="dataView()" class="btn btn-small btn-success">
 							<i class="icon-signal"></i>
 						</button>
 
-						<button class="btn btn-small btn-info">
+						<button onclick="modifyMy()" class="btn btn-small btn-info">
 							<i class="icon-pencil"></i>
 						</button>
 
-						<button class="btn btn-small btn-warning">
+						<button onclick="selectStayRegister()" class="btn btn-small btn-warning">
 							<i class="icon-group"></i>
 						</button>
 
-						<button class="btn btn-small btn-danger">
+						<button onclick="exit()" class="btn btn-small btn-danger">
 							<i class="icon-cogs"></i>
 						</button>
 					</div>
@@ -583,8 +583,32 @@
 				
 			
 			})
+
+			function modifyMy(){
+                document.getElementById("bigGuide").innerHTML='员工信息';
+                document.getElementById("smallGuide").innerHTML="修改个人信息";
+                document.getElementById('Mainid').src='${ctx}/user/toModifyMy.do';
+			}
+
+			function selectStayRegister(){
+                var a=document.getElementById("stayManageId").getElementsByTagName('span')[0].innerHTML;
+                document.getElementById("bigGuide").innerHTML=a+"";
+                var s=document.getElementById("personageId").getElementsByTagName('span')[0].innerHTML;
+                document.getElementById("smallGuide").innerHTML=s+"";
+                document.getElementById('Mainid').src='${ctx}/StayRegister/tolist.do';
+			}
+
+			function dataView(){
+                var a=document.getElementById("dateViewId").getElementsByTagName('span')[0].innerHTML;
+                document.getElementById("bigGuide").innerHTML=a+"";
+                var s=document.getElementById("yingYeJinEId").getElementsByTagName('span')[0].innerHTML;
+                document.getElementById("smallGuide").innerHTML=s+"";
+                document.getElementById('Mainid').src='${ctx}/DateView/tolist.do';
+			}
 			
-			
+			function exit(){
+			    location.href='${ctx}/user/exit.do';
+			}
 			
 			
 			function dateView(){

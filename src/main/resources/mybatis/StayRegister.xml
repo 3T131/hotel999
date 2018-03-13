@@ -4,6 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.accp.dao.StayRegisterDao">
 
+    <!--统计数据-->
+    <select id="selectShuJuTongJi" resultType="com.accp.entity.StayRegister">
+        SELECT s.* FROM stayregister s
+        WHERE s.isBillID=69   and s.payTime BETWEEN #{min} AND #{max}
+    </select>
+
 <!--删除StayRegisterDetails表有stayRegisterID的列-->
     <delete id="deleteStayRegisterDetailsByStayRegisterID">
         DELETE FROM stayregisterdetails WHERE stayRegisterID=#{stayRegisterID}

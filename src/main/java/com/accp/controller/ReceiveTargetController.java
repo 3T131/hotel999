@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/ReceiveTarget")
@@ -19,6 +20,8 @@ public class ReceiveTargetController {
     private ReceiveTargetBiz receiveTargetBiz;
     @Resource
     private AttributeDetailsBiz attributeDetailsBiz;
+
+
 
     /**
      * 查询列表

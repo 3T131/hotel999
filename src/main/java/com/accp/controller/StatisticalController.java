@@ -1,5 +1,6 @@
 package com.accp.controller;
 
+import com.accp.biz.ConsumptionDetailsBiz;
 import com.accp.biz.StatisticalBiz;
 import com.accp.biz.StayRegisterBiz;
 import com.accp.entity.Pager;
@@ -22,9 +23,13 @@ public class StatisticalController {
     @Resource
     private StayRegisterBiz stayRegisterBiz;
 
+    @Resource
+    private ConsumptionDetailsBiz consumptionDetailsBiz;
+
     @RequestMapping("/toinformation.do")
     public String toInformation(StayRegister stayRegister,Model model){
         model.addAttribute("stayRegister",stayRegisterBiz.getStayRegister(stayRegister));
+        model.addAttribute("consumptionDetails",consumptionDetailsBiz.listByStayRegister(stayRegister.getStayRegisterId()));
         return "financialstatistics/particulars";
     }
 

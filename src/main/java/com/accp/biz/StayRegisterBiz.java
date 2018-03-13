@@ -4,10 +4,19 @@ import com.accp.entity.Pager;
 import com.accp.entity.StayRegister;
 import com.alibaba.fastjson.JSONArray;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
 public interface StayRegisterBiz {
+
+    /**
+     * 统计数据
+     * @param min
+     * @param max
+     * @return
+     */
+    public List<StayRegister> selectShuJuTongJi(Timestamp min, Timestamp max);
 
     /**
      * 新增预定开房

@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -33,6 +34,11 @@ public class StayRegisterBizImpl implements StayRegisterBiz {
 
     @Resource
     private PredetermineDao predetermineDao;
+
+    public List<StayRegister> selectShuJuTongJi(Timestamp min, Timestamp max) {
+        return this.stayRegisterDao.selectShuJuTongJi(min, max);
+    }
+
     /**
      * 新增预定开房
      * @return

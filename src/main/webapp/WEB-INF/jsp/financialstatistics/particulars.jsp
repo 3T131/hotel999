@@ -182,7 +182,7 @@
       <div class="row-fluid" >
 		   <div class="span4 pull-right"  style="margin-bottom: 8px;"> 
 		   	 <button class="btn btn-warning" type="button" onclick="deletefunction()">
-		   	  <li class="icon-remove icon-white"></li>取消</button>
+		   	  <li class="icon-remove icon-white"></li>返回</button>
 		   </div>
 	   </div>
     </div>
@@ -199,7 +199,7 @@
     </div>
     
     <form action="${ctx}/StayRegister/add.do" method="post" onsubmit="return verify()">
-        <div id="divhidden" hidden>
+        <div id="divhidden">
 	    <div class="span12">
 	      <div class="row-fluid">
 		     <div class="span4">
@@ -248,11 +248,11 @@
 		     </div>
 		      <div class="span4">
 		        <label class="floatont">登记时间：</label>
-		        <label class="yanseblue">${stayRegister.registerTime}</label>
+		        <label class="yanseblue"><fmt:formatDate value="${stayRegister.registerTime}" pattern="yyyy-MM-dd HH:mm:ss"/> </label>
 		     </div>
 		     <div class="span3">
 		        <label class="floatont">出租方式：</label>
-		        <label class="yanseblue">${stayRegister.passengerType}</label>
+		        <label class="yanseblue">${stayRegister.rentOutType}</label>
 		     </div>
 		  </div>
 	    </div>
@@ -261,15 +261,15 @@
 	      <div class="row-fluid">
 		     <div class="span4">
 		        <label class="floatont">结账方式：</label>
-		        <label class="yanseblue">${list[0].payWayName}</label>
+		        <label class="yanseblue">${stayRegister.payWay}</label>
 		     </div>
 		     <div class="span4">
 		        <label class="floatont">结账单位：</label>
-		        <label class="yanseblue">${list[0].billUnitName}</label>
+		        <label class="yanseblue">${stayRegister.billUnit}</label>
 		     </div>
 		     <div class="span4">
 		        <label class="floatont">是否预订：</label>
-		        <label style="color:orange">${list[0].predetermineID==null?"否":"是"}</label>
+		        <label style="color:orange">${stayRegister.predetermineID==null?"否":"是"}</label>
 		     </div>
 		  </div>
 	    </div>
@@ -278,15 +278,15 @@
 	      <div class="row-fluid">
 		     <div class="span4">
 		        <label class="floatont">房价/天：</label>
-		        <label class="yanseblue">${list[0].roomStandardPriceDay}</label>
+		        <label class="yanseblue">${stayRegister.room.standardPriceDay}</label>
 		     </div>
 		     <div class="span4">
 		        <label class="floatont">房价/小时：</label>
-		        <label class="yanseblue">${list[0].roomStandardPrice}</label>
+		        <label class="yanseblue">${stayRegister.room.standardPrice}</label>
 		     </div>
 		     <div class="span3">
 		        <label class="floatont">首段价格：</label>
-		        <label class="yanseblue">${list[0].roomFirstPrice}</label>
+		        <label class="yanseblue">${stayRegister.room.firstPrice}</label>
 		     </div>
 		  </div>
 	    </div>
@@ -295,15 +295,15 @@
 	      <div class="row-fluid">
 		     <div class="span4">
 		        <label class="floatont">天数或钟点数：</label>
-		        <label class="yanseblue">${list[0].stayNumber}</label>
+		        <label class="yanseblue">${stayRegister.stayNumber}</label>
 		     </div>
 		     <div class="span4">
 		        <label class="floatont">住宿费：</label>
-		        <label class="yanseblue">${zhuSuFei}</label>
+		        <label class="yanseblue">${stayRegister.accommodation}</label>
 		     </div>
 		     <div class="span3">
 		        <label class="floatont">换房费：</label>
-		        <label class="yanseblue">${list[0].changRoomMoney}</label>
+		        <label class="yanseblue">${stayRegister.changRoomMoney}</label>
 		     </div>
 		  </div>
 	    </div>
@@ -312,41 +312,20 @@
 	      <div class="row-fluid">
 		     <div class="span4">
 		        <label class="floatont">其他消费：</label>
-		        <label class="yanseblue">${qiTaXiaoFei}</label>
+		        <label class="yanseblue">${stayRegister.otherConsumer}</label>
 		     </div>
 		     <div class="span4">
 		        <label class="floatont">旅客押金：</label>
-		        <label class="yanseblue">${yaJin}</label>
+		        <label class="yanseblue">${stayRegister.depoit.depositMoney}</label>
 		     </div>
 		     <div class="span3">
 		        <label class="floatont">总费用：</label>
-		        <label class="yansered">${list[0].sumConst}</label>
+		        <label class="yansered">${stayRegister.sumConst}</label>
 		     </div>
 		  </div>
 	    </div>
-        
-        <div class="span10 margin-top-one">
-	      <fieldset>
-	        <legend >预订信息：</legend>
-	      </fieldset>
-	    </div>
-	     <div class="span12">
-	      <div class="row-fluid">
-		     <div class="span4">
-		        <label class="floatont">预订者姓名：</label>
-		        <label class="yanseblue">${list[0].predeterminePassengerName}</label>
-		     </div>
-		     <div class="span4">
-		        <label class="floatont">证件号码：</label>
-		        <label class="yanseblue">${list[0].predeterminePassengerPapersNumber}</label>
-		     </div>
-		     <div class="span3">
-		        <label class="floatont">联系电话：</label>
-		        <label class="yansered">${list[0].predeterminePassengerContactPhoneNumber}</label>
-		     </div>
-		  </div>
-	    </div>
-	    </div>
+
+
 	    <!--  ———————————————————————————————————————————————————————————————————————————————————————— -->
 	   <div class="span10 margin-top-one">
 	      <fieldset>
@@ -359,24 +338,15 @@
 	        <tr>
 	          <th rowspan="2">接待对象</th>
 	          <th rowspan="2">押金</th>
-	          <th rowspan="2">支付方式</th>
 	          <th rowspan="2">押金时间</th>
 	          
 	      </thead>
 	      <tbody id="tbody">
-	        <c:forEach items="${listDeposit}" var="item">
 		        <tr>
-		          <c:if test="${item.receiveTargetID==2}">
-		             <td>${item.receiveTargeTypeName}</td>
-		          </c:if>
-		          <c:if test="${item.receiveTargetID!=2}">
-		             <td>${item.receiveTeamName}</td>
-		          </c:if>
-		          <td>${item.deposit}</td>
-		          <td>${item.depositPayWayName}</td>
-		          <td>${item.depositRegisterTime}</td>
+		          <td>${stayRegister.receiveTarget.principal}</td>
+		          <td>${stayRegister.depoit.depositMoney}</td>
+		          <td><fmt:formatDate value="${stayRegister.depoit.registerDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 		        </tr>
-	        </c:forEach>
 	      </tbody>
 	    </table>
 	    </div>
@@ -401,15 +371,15 @@
 	        </tr>
 	      </thead>
 	      <tbody id="tbodyTwo">
-	        <c:forEach items="${listXiaoFei}" var="item">
+	        <c:forEach items="${consumptionDetails}" var="item">
 		        <tr>
-		          <td>${item.commodityName}</td>
-		          <td>${item.commodityTypeName}</td>
-		          <td>${item.commodityUOMName}</td>
+		          <td>${item.commodity.commodityName}</td>
+		          <td>${item.commodity.commodityType}</td>
+		          <td>${item.commodity.uOM}</td>
 		          <td>${item.consumptionNumber}</td>
-		          <td>${item.commoditySalePrice}</td>
 		          <td>${item.consumptionMoney}</td>
-		          <td>${item.consumptionTime}</td>
+		          <td>${item.consumptionMoney}</td>
+		          <td><fmt:formatDate value="${item.consumptionTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 		        </tr>
 	        </c:forEach>
 	      </tbody>
@@ -418,7 +388,7 @@
     </div>
 
 	
-		  
+		</div>
     </form>
       
     </div>
@@ -429,7 +399,7 @@
  
  <script type="text/javascript">
  
- document.getElementById("btn2").style.display="none"; //隐藏
+ document.getElementById("btn1").style.display="none"; //隐藏
  
  
  
