@@ -135,8 +135,8 @@ public class PredetermineController {
      */
     @RequestMapping("/selectPassenger.do")
     @ResponseBody
-    public String selectPassenger(String roomNumber) {
-        return JSON.toJSONString(predetermineBiz.listByPassenger(roomNumber));
+    public String selectPassenger(String name) {
+        return JSON.toJSONString(predetermineBiz.listByPassenger(name));
     }
 
     /**
