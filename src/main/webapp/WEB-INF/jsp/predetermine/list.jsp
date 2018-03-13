@@ -121,6 +121,7 @@
        </div>
           <c:if test="${userSession.targetTypeID==55}">
        <div class="span3">
+           <input  id="roomID" type="hidden" name="roomID" value="${predetermine.roomID}">
          <button class="btn btn-danger btn-small textone" type="button" onclick="deletefunction()"><li class="icon-remove icon-white"></li>删除</button>
        </div>
           </c:if>
@@ -290,6 +291,7 @@
     </div>
     
     <div class="modal hide fade" id="lvke" style="text-align: center;">
+
       <div class="span5" style="width:98%;height:480px; overflow-x:auto;">
          <div class="row-fluid">
 		   <div class="span8">

@@ -88,6 +88,10 @@ public class PredetermineController {
      */
     @RequestMapping("/delete.do")
     public String delete(String[] id) {
+        for (int i = 0; i <id.length ; i++) {
+            Predetermine predetermine1 = predetermineBiz.selectById(Integer.parseInt(id[i]));
+            roomBiz.updateState(1,predetermine1.getRoomID());
+        }
         predetermineBiz.delete(id);
         return "redirect:select.do";
     }
@@ -135,8 +139,8 @@ public class PredetermineController {
      */
     @RequestMapping("/selectPassenger.do")
     @ResponseBody
-    public String selectPassenger(String roomNumber) {
-        return JSON.toJSONString(predetermineBiz.listByPassenger(roomNumber));
+    public String selectPassenger(String name) {
+        return JSON.toJSONString(predetermineBiz.listByPassenger(name));
     }
 
     /**
