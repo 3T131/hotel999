@@ -162,7 +162,9 @@
       </div>
     </div>
     
-    <form action="${ctx}/ReceiveTarget/update.do" method="post" onsubmit="return verify()">
+		<form <c:if test="${userSession.targetTypeID==55}">action="${ctx}/ReceiveTarget/update.do"</c:if>
+			  <c:if test="${userSession.targetTypeID==56}">action="${ctx}/user/update.do"</c:if>
+			method="post" onsubmit="return verify()">
         <input name="receiveTargetId" value="${list.receiveTargetId}" type="hidden">
 	    <div class="span12">
 	      <div class="row-fluid">

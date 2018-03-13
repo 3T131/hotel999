@@ -29,7 +29,7 @@ public class UserController {
      */
     @RequestMapping("/login.to")
     public String toLogin(){
-        return "login/login";
+        return "login/login2";
     }
 
     /**
@@ -47,13 +47,13 @@ public class UserController {
             return "redirect:/Main/main";
         }
         model.addAttribute("error","用户名或密码错误");
-        return "login/login";
+        return "login/login2";
     }
 
     @RequestMapping("/exit.do")
     public String exit(HttpSession session){
         session.invalidate();
-        return "login/login";
+        return "login/login2";
     }
 
     /**
@@ -77,9 +77,19 @@ public class UserController {
      * @return
      */
     @RequestMapping("/update.do")
-    public String update(ReceiveTarget receiveTarget){
+    public String update(ReceiveTarget receiveTarget,HttpSession session){
         receiveTargetBiz.updateReceiveTarget(receiveTarget);
-        return "redirect:Main/main";
+        session.setAttribute("userSession",receiveTargetBiz.queryByid(receiveTarget.getReceiveTargetId()));
+        return "redirect:/user/toModifyMy.do";
+    }
+
+    /**
+     * 跳转403页面
+     * @return
+     */
+    @RequestMapping("/user403")
+    public String user403(){
+        return "error/page_403";
     }
 
 
