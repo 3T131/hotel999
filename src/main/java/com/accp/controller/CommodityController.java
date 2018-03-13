@@ -71,7 +71,6 @@ public class CommodityController {
         }
     }
 
-
     /**
      * 空跳到修改商品信息页面
      * @return

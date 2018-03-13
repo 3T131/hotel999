@@ -96,7 +96,9 @@ function suibian(ss){
     }
 }
 
-
+function passengerAdd(){
+    parent.document.getElementById('Mainid').src=getRootPath()+'/Passenger/toadd.do';
+}
 function allroomfunction(){
     guestRoomLevelID=0;
     tenfunction();

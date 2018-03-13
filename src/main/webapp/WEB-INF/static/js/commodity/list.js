@@ -34,7 +34,7 @@ function updatefunction(){
 
 function deletefunction(){
     var chk_value=[];
-    $('input[name="id"]:checked').each(function(){
+    $('input[name="commodityId"]:checked').each(function(){
         chk_value.push($(this).val());
     });
     if(chk_value!=""){

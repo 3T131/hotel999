@@ -119,9 +119,11 @@
        <div class="span3">
          <button class="btn btn-warning btn-small textone" type="button" onclick="updatefunction()"><li class="icon-pencil icon-white"></li>修改</button>
        </div>
+          <c:if test="${userSession.targetTypeID==55}">
        <div class="span3">
          <button class="btn btn-danger btn-small textone" type="button" onclick="deletefunction()"><li class="icon-remove icon-white"></li>删除</button>
        </div>
+          </c:if>
         <div class="span3">
          <button class="btn btn-info btn-small textone" type="button" onclick="arrangeRoom()"><li class="icon-plus icon-white"></li>安排房间</button>
        </div>

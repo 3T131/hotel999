@@ -189,9 +189,11 @@
     </div>
     
     <div class="span4" style="text-align:center;">
+          <c:if test="${userSession.targetTypeID==55}">
        <div class="row-fluid">
          <button class="btn btn-danger textone" type="button" onclick="deletefunction()"><li class="icon-remove icon-white"></li>删除</button>
        </div>
+		  </c:if>
     </div>
     
     <div class="span3" style="text-align:left;">

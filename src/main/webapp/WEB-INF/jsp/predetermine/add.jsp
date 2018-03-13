@@ -323,7 +323,7 @@
 
 
       <div class="modal hide fade" id="lvke" style="text-align: center;">
-          <div class="span5" style="width:98%;height:480px; overflow-x:auto;">
+          <div class="span6" style="width:98%;height:480px; overflow-x:auto;">
               <div class="row-fluid">
                   <div class="span8">
                       <label class="labelroomnumber">旅客姓名：</label>
@@ -334,8 +334,11 @@
                               <li class="icon-search icon-white"></li>搜索</button>
                       </div>
                   </div>
-                  <div class="span4">
-                      <button class="btn btn-info btn-small textone" type="button" onclick="confirmfunction()" data-dismiss="modal"><li class="icon-plus icon-white"></li>确定选择</button>
+                  <div class="span2">
+                      <button class="btn btn-info btn-small textone" type="button" onclick="confirmfunction()">确定选择</button>
+                  </div>
+                  <div class="span2">
+                      <button class="btn btn-info btn-small textone" type="button" onclick="passengerAdd()" data-dismiss="modal">添加旅客</button>
                   </div>
               </div>
               <div class="dgvone" style="width:93%;">

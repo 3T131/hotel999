@@ -130,8 +130,10 @@
             <button class="btn btn-info btn-small" type="button" onclick="depositfunction()"><li class="icon-eye-open icon-white"></li>押金记录</button>
             <button class="btn btn-info btn-small" type="button" onclick="consumptionfunction()"><li class="icon-gift icon-white"></li>旅客消费</button>
             <button class="btn btn-info btn-small" type="button" onclick="updatefunction()"><li class="icon-refresh icon-white"></li>修改记录</button>
+              <c:if test="${userSession.targetTypeID==55}">
 			<button class="btn btn-info btn-small" type="button" onclick="deletefunction()"><li class="icon-refresh icon-white"></li>删除记录</button>
-        </div>
+			  </c:if>
+				  </div>
         <div class="tab-pane" id="tab2">
        
 

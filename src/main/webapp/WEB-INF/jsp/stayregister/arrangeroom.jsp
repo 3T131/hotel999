@@ -192,7 +192,7 @@
 		  <div class="span6" style="text-align:center;">
 		      <div class="row-fluid">
 			      <div class="span12" style="margin-bottom: 8px;">
-				   	 <button class="btn btn-primary" type="button" onclick="tijiao()"">
+				   	 <button class="btn btn-primary" type="button" onclick="tijiao()">
 				   	 <li class="icon-check icon-white"></li>保存</button>
 				  </div> 
 			  </div>
